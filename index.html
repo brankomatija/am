@@ -1,64 +1,65 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<title>Audio en loop con retraso</title>
-<style>
-    /* Estilos básicos */
+  <meta charset="UTF-8">
+  <title>Audio en loop con retraso</title>
+  <style>
     body {
-        margin: 0;
-        height: 100vh;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background-color: #f5f5f5;
-        font-family: sans-serif;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f5f5f5;
+      font-family: sans-serif;
     }
 
-    /* Contenedor para centrar el icono */
     #container {
-        position: relative;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    /* Icono de mute */
     #mute-icon {
-        font-size: 64px;
-        cursor: pointer;
-        user-select: none;
+      font-size: 64px;
+      cursor: pointer;
+      user-select: none;
     }
-</style>
+  </style>
 </head>
 <body>
-    <div id="container">
-        <!-- Reproductor de audio -->
-        <audio id="player" loop preload="auto">
-            <source src="https://www.myinstants.com/media/sounds/dry-fart.mp3" type="audio/mpeg">
-            Tu navegador no soporta la reproducción de audio.
-        </audio>
-        <!-- Icono de mute/desmute -->
-        <div id="mute-icon">🔇</div>
-    </div>
+  <div id="container">
+    <audio id="player" loop preload="auto" muted>
+      <source src="https://www.myinstants.com/media/sounds/dry-fart.mp3" type="audio/mpeg">
+      Tu navegador no soporta la reproducción de audio.
+    </audio>
+    <div id="mute-icon">🔇</div>
+  </div>
 
-<script>
-    // Referencias al audio y al icono
-    const player   = document.getElementById('player');
+  <script>
+    const player = document.getElementById('player');
     const muteIcon = document.getElementById('mute-icon');
+    let isStarted = false;
 
-    // Reproduce el audio tras 3 segundos
-    setTimeout(() => {
-        player.play().catch((err) => {
-            console.warn('Error al iniciar la reproducción automática:', err);
-        });
-    }, 3000);
-
-    // Alterna entre mute y sonido al hacer clic en el icono
     muteIcon.addEventListener('click', () => {
+      if (!isStarted) {
+        muteIcon.textContent = '⏳';
+        setTimeout(() => {
+          player.muted = false;
+          player.play().then(() => {
+            muteIcon.textContent = '🔊';
+          }).catch((e) => {
+            console.error('Error al reproducir:', e);
+            muteIcon.textContent = '❌';
+          });
+        }, 3000);
+        isStarted = true;
+      } else {
         player.muted = !player.muted;
         muteIcon.textContent = player.muted ? '🔇' : '🔊';
+      }
     });
-</script>
+  </script>
 </body>
 </html>
